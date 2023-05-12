@@ -17,13 +17,13 @@ module.exports = {
                 if (err) {
                   console.log(err.stack)
                 } else {
-                  console.log(res.rows[0])
+                  console.log(res)
                 }});
             // time elapsed since invocation to execution
             const duration = Date.now() - start;
             console.log(
               'executed query', 
-              {text, duration, rows: res.rowCount}
+              {text, duration }
             );
             return res;
         } catch (error) {

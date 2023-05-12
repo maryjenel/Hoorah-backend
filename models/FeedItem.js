@@ -11,12 +11,12 @@ function FeedItem ({
 FeedItem.prototype.createFeedItem = async function({ title, 
     media }) {
     try {
-
-        const sqlText = `INSERT INTO feeditem(title, media) VALUES($1, $2);`;
+        const sqlText = "INSERT INTO feeditem(title, media) VALUES($1, $2)";
         const values = [title, media];
-        const { rows } = await db.query(sqlText, values);
-        return rows; 
+        const request = await db.query(sqlText, values);
+        return request; 
     } catch (error) {
+        console.log({error})
         throw error;
     }
 };
