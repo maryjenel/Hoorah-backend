@@ -20,3 +20,16 @@ exports.postFeedItem = async (req, res, next) => {
         next(errorToThrow);
     }
 };
+
+exports.getFeed = async (req, res, next) => {
+
+    const {title, media} = req.query;
+    try {
+        const feedItem = new FeedItem({title, media});
+        await feedItem.getFeed();
+        res.send(feedItem);
+    } catch (error) {
+        console.log(`Error code: ${error?.code}`, error)
+  
+    }
+};
