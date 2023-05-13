@@ -2,7 +2,7 @@ const FeedItem = require('../models/FeedItem');
 
 exports.postFeedItem = async (req, res, next) => {
 
-    const {title, media} = req.query;
+    const {title, media} = req.body;
     try {
         const feedItem = new FeedItem({title, media});
         await feedItem.createFeedItem({title,media});
