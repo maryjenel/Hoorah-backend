@@ -3,10 +3,10 @@ const db = require('../db');
 
 exports.postFeedItem = async (req, res, next) => {
 
-    const {title, media} = req.body;
+    const {id, title, media} = req.body;
     try {
-        const feedItem = new FeedItem({title, media});
-        await feedItem.createFeedItem({title,media});
+        const feedItem = new FeedItem({id, title, media});
+        await feedItem.createFeedItem(feedItem);
         res.send(feedItem);
     } catch (error) {
         const errorToThrow = new Error();
