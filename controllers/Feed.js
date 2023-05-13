@@ -1,4 +1,5 @@
 const FeedItem = require('../models/FeedItem');
+const db = require('../db');
 
 exports.postFeedItem = async (req, res, next) => {
 
@@ -21,15 +22,16 @@ exports.postFeedItem = async (req, res, next) => {
     }
 };
 
-exports.getFeed = async (req, res, next) => {
-
-    const {title, media} = req.query;
+exports.getFeed = async  (request, response) => {
     try {
-        const feedItem = new FeedItem({title, media});
-        await feedItem.getFeed();
-        res.send(feedItem);
-    } catch (error) {
-        console.log(`Error code: ${error?.code}`, error)
-  
-    }
+        await db.query('SELECT * FROM feeditem ORDER BY id ASC', (error, results) => {
+           if (error) {
+             throw error
+           }
+           response.status(200).json(results.rows)
+         })
+       } catch (error) {
+           console.log({error})
+           throw error;
+       }
 };
