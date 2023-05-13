@@ -21,21 +21,4 @@ FeedItem.prototype.createFeedItem = async function({ title,
     }
 };
 
-FeedItem.prototype.getFeed = async function() {
-    try {
-      const req =  await db.query('SELECT * FROM public.feeditem ORDER BY id ASC ', (error, results) => {
-            
-              console.log({req})
-              if (error) {
-                throw error
-
-              }
-        })
-        return req
-   
-    } catch (error) {
-        console.log({error})
-        throw error;
-    }
-};
 module.exports = FeedItem;
