@@ -7,7 +7,7 @@ const pool = new Pool({
     password: process.env.PGPASSWORD,
     ssl: {
       rejectUnauthorized: false,
-  }
+    }
   });
 
 module.exports = {
