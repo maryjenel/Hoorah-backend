@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const feedRoute = require('./routes/feed');
+const authRoute = require('./routes/auth');
 const verifyToken = require('./auth/AuthToken');
 
 app.use(express.json());
@@ -21,6 +22,10 @@ app.use((err, req, res, next) => {
 /** For every route, try checking req headers for a JWT token value and verify that is valid
  * before allowing the request to go through
  */
+// this route is to get an access token
+app.use(authRoute);
+
+// all following routes need a token
 app.all('/*', verifyToken);
 app.use(feedRoute);
 

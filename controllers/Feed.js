@@ -1,9 +1,7 @@
 const FeedItem = require('../models/FeedItem');
 const db = require('../db');
-const { saveJwtCookie } = require('../auth/JwtCookie');
 
 exports.postFeedItem = async (req, res, next) => {
-    saveJwtCookie(req, res, next);
     const {title, media} = req.body;
     try {
         const feedItem = new FeedItem({title, media});
@@ -24,7 +22,6 @@ exports.postFeedItem = async (req, res, next) => {
 };
 
 exports.getFeed = async  (request, response, next) => {
-    saveJwtCookie(request, response, next);
     try {
         await db.query('SELECT * FROM feeditem ORDER BY id ASC', (error, results) => {
            if (error) {
