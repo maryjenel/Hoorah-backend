@@ -3,14 +3,11 @@ const app = express();
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
-// Ensures that any incoming POST request has its body parsed from JSON into a 
-// JavaScript object.  Required before the other app.use calls. 
+const feedRoute = require('./routes/feed');
+const verifyToken = require('./auth/AuthToken');
+
 app.use(express.json());
 app.use(cookieParser());
-
-const feedRoute = require('./routes/feed');
-const verifyToken = require('./models/auth');
-
 
 app.use((err, req, res, next) => {
     if(err.statusCode) {
@@ -21,7 +18,7 @@ app.use((err, req, res, next) => {
     }
 });
 
-/** For every route, try checking its headers for a JWT token value and verify that is valid
+/** For every route, try checking req headers for a JWT token value and verify that is valid
  * before allowing the request to go through
  */
 app.all('/*', verifyToken);

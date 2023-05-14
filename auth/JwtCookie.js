@@ -5,7 +5,6 @@ const db = require('../db');
 
 exports.saveJwtCookie = async (req, res) => {
 
-    console.log('saveJwtCookie');
     // try to see if the cookie exists
     const cookies = new Cookies(req, res, { keys: [process.env.COOKIE_KEY] });
     // Get a secure / signed cookie if it exists

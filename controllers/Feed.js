@@ -1,6 +1,6 @@
 const FeedItem = require('../models/FeedItem');
 const db = require('../db');
-const { saveJwtCookie } = require('./JwtCookie');
+const { saveJwtCookie } = require('../auth/JwtCookie');
 
 exports.postFeedItem = async (req, res, next) => {
     saveJwtCookie(req, res, next);
