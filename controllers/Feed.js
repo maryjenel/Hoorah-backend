@@ -4,9 +4,9 @@ const { saveJwtCookie } = require('./JwtCookie');
 
 exports.postFeedItem = async (req, res, next) => {
     saveJwtCookie(req, res, next);
-    const {id, title, media} = req.body;
+    const {title, media} = req.body;
     try {
-        const feedItem = new FeedItem({id, title, media});
+        const feedItem = new FeedItem({title, media});
         await feedItem.createFeedItem(feedItem);
         res.send(feedItem);
     } catch (error) {
