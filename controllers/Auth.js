@@ -15,7 +15,7 @@ exports.getAccessToken = async (request, response) => {
             const token = jwt.sign({ userIp: request.ip, issuedAt: Date.now(), requestCount: 0 }, process.env.TOKEN_KEY, { expiresIn: '60m' });
             const encodedToken = utf8.encode(token);
             // Set a secure cookie
-            cookies.set(JWT_TOKEN_COOKIE, encodedToken, { signed: true, httpOnly: true, secure: false, expiresIn: '60m' });
+            cookies.set(JWT_TOKEN_COOKIE, encodedToken, { signed: true, httpOnly: true, secure: true, expiresIn: '60m' });
             returnToken = token;
         } else {
             // token exists, decode and verify its still valid
@@ -26,7 +26,7 @@ exports.getAccessToken = async (request, response) => {
                     const token = jwt.sign({ userIp: request.ip, issuedAt: Date.now(), requestCount: 0 }, process.env.TOKEN_KEY, { expiresIn: '60m' });
                     const encodedToken = utf8.encode(token);
                     // Set a secure cookie with newly signed token
-                    cookies.set(JWT_TOKEN_COOKIE, encodedToken, { signed: true, httpOnly: true, secure: false, expiresIn: '60m' });
+                    cookies.set(JWT_TOKEN_COOKIE, encodedToken, { signed: true, httpOnly: true, secure: true, expiresIn: '60m' });
                     returnToken = token;
                 }
                 else {
