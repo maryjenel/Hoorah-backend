@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
 require('dotenv').config();
 
 const feedRoute = require('./routes/feed');
@@ -9,6 +10,15 @@ const verifyToken = require('./auth/AuthToken');
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(session({
+    secret: process.env.COOKIE_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+    },
+}));
 
 app.use((err, req, res, next) => {
     if(err.statusCode) {
