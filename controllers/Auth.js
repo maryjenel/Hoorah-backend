@@ -4,20 +4,20 @@ const Cookies = require('cookies');
 const CONSTANTS = require('../constants');
 
 exports.getAccessToken = async (request, response) => {
-    const JWT_TOKEN_COOKIE = CONSTANTS.JWT_TOKEN_COOKIE;
-    const isSecure = process.env.NODE_ENV === "production" ? true : false;
+    const { JWT_TOKEN_COOKIE } =  CONSTANTS;
+    const { TOKEN_KEY, COOKIE_KEY } =  process.env;
     try {
         // try to see if the cookie exists
-        const cookies = new Cookies(request, response, { keys: [process.env.COOKIE_KEY] });
+        const cookies = new Cookies(request, response, { keys: [COOKIE_KEY] });
         // Get a secure / signed cookie if it exists
         const cookie = cookies.get(JWT_TOKEN_COOKIE, { signed: true });
         let returnToken = 'token';
-        // if it doesnt exist, sign a new one, save cookie and send token in response
+        // if it doesnt exist, sign a new one, encode it,a save cookie and send token in response
         if (!cookie) {
-            const token = jwt.sign({ userIp: request.ip, issuedAt: Date.now(), requestCount: 0 }, process.env.TOKEN_KEY, { expiresIn: '60m' });
+            const token = jwt.sign({ userIp: request.ip, issuedAt: Date.now(), requestCount: 0 }, TOKEN_KEY, { expiresIn: '60m' });
             const encodedToken = utf8.encode(token);
             // Set a secure cookie
-            cookies.set(JWT_TOKEN_COOKIE, encodedToken, { signed: true, httpOnly: true, secure: isSecure, expiresIn: '60m' });
+            cookies.set(JWT_TOKEN_COOKIE, encodedToken, { signed: true, httpOnly: true, secure: false, expiresIn: '60m' });
             returnToken = token;
         } else {
             // token exists, decode and verify its still valid
@@ -25,10 +25,10 @@ exports.getAccessToken = async (request, response) => {
             jwt.verify(decodedToken, process.env.TOKEN_KEY, (err, decoded) => {
                 if (err) {
                     // not valid, sign a new one
-                    const token = jwt.sign({ userIp: request.ip, issuedAt: Date.now(), requestCount: 0 }, process.env.TOKEN_KEY, { expiresIn: '60m' });
+                    const token = jwt.sign({ userIp: request.ip, issuedAt: Date.now(), requestCount: 0 }, TOKEN_KEY, { expiresIn: '60m' });
                     const encodedToken = utf8.encode(token);
                     // Set a secure cookie with newly signed token
-                    cookies.set(JWT_TOKEN_COOKIE, encodedToken, { signed: true, httpOnly: true, secure: isSecure, expiresIn: '60m' });
+                    cookies.set(JWT_TOKEN_COOKIE, encodedToken, { signed: true, httpOnly: true, secure: false, expiresIn: '60m' });
                     returnToken = token;
                 }
                 else {
