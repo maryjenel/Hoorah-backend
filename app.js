@@ -12,14 +12,16 @@ const isSecure = process.env.NODE_ENV === 'production' ? true : false;
 app.use(express.json());
 app.use(cookieParser());
 
+app.set('trust proxy', 1);
 app.use(session({
     secret: process.env.COOKIE_KEY,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
-      secure: isSecure
-    },
-    proxy: true
+      secure: isSecure,
+      maxAge: 518400000
+    }
 }));
 
 app.use((err, req, res, next) => {
