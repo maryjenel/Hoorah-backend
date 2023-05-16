@@ -7,6 +7,7 @@ require('dotenv').config();
 const feedRoute = require('./routes/feed');
 const authRoute = require('./routes/auth');
 const verifyToken = require('./auth/AuthToken');
+const isSecure = process.env.NODE_ENV === 'production' ? true : false;
 
 app.use(express.json());
 app.use(cookieParser());
@@ -16,8 +17,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false,
+      secure: isSecure
     },
+    proxy: true
 }));
 
 app.use((err, req, res, next) => {
@@ -41,5 +43,5 @@ app.use(feedRoute);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log('Server Started on port:' + PORT);
+  console.log('Server Started on port:' + PORT + ' and env = ' + process.env.NODE_ENV);
 });
