@@ -6,6 +6,8 @@ require('dotenv').config();
 
 const feedRoute = require('./routes/feed');
 const authRoute = require('./routes/auth');
+const mediaRoute = require('./routes/media');
+
 const verifyToken = require('./auth/AuthToken');
 const isSecure = process.env.NODE_ENV === 'production' ? true : false;
 
@@ -42,6 +44,7 @@ app.use(authRoute);
 // all following routes need a token
 app.all('/*', verifyToken);
 app.use(feedRoute);
+app.use(mediaRoute)
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
