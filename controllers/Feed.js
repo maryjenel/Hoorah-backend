@@ -74,7 +74,7 @@ uploadFileToS3 = async function(aFile) {
     }
     // URL cant have spaces in it
     const fileName = aFile.name.replaceAll(' ', '_');
-    const url = `${AWS_S3_BUCKET_URL}/${fileName}`
+    const url = `${process.env.AWS_S3_BUCKET_URL}/${fileName}`
     await axios.put(url, aFile.data, options).then((res) => {
         returnUrl = res.config.url;
     });
