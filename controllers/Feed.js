@@ -8,7 +8,9 @@ const db = require('../db');
 exports.postFeedItem = async (req, res, next) => {
     // get the file that was uploaded
     const file = req.files.media;
-    const fileName = file.name;
+    let split = file.name.split('.');
+    split.pop();
+    const fileName = split.join('.');
     // upload to s3 bucket
     const url = await uploadFileToS3(file);
     try {
