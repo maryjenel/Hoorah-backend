@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const fileupload = require("express-fileupload");
 require('dotenv').config();
 
 const feedRoute = require('./routes/feed');
@@ -11,6 +12,8 @@ const isSecure = process.env.NODE_ENV === 'production' ? true : false;
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(fileupload());
+app.use(express.urlencoded({ extended: true }));
 
 app.set('trust proxy', 1);
 app.use(session({

@@ -1,18 +1,22 @@
+const axios = require('axios');
+
 const db = require('../db');
 //User constructor
 function FeedItem ({
-  title, 
-  media, 
+  fileName, 
+  url, 
 }) {
-    this.title = title;
-    this.media = media;
+    this.fileName = fileName;
+    this.url = url;
 };
 // add a createFeed method to the prototype
 FeedItem.prototype.createFeedItem = async function(feedItem) {
-    const { title, media } = feedItem;
+
+    const { fileName, url } = feedItem;
+    console.log('url in post feedItem = ' + url + ' and name = ' + fileName);
     try {
         const sqlText = "INSERT INTO feeditem(title, media) VALUES($1, $2)";
-        const values = [title, media];
+        const values = [fileName, url];
         const request = await db.query(sqlText, values);
         return request; 
     } catch (error) {
