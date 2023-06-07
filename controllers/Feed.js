@@ -8,8 +8,11 @@ const db = require('../db');
 exports.postFeedItem = async (req, res, next) => {
     // get the file that was uploaded
     const file = req.files.media;
+    // split so file extension can be removed
     let split = file.name.split('.');
+    // remove extension
     split.pop();
+    // join back together without extension
     const fileName = split.join('.');
     // upload to s3 bucket
     const url = await uploadFileToS3(file);
@@ -57,8 +60,8 @@ uploadFileToS3 = async function(aFile) {
           service: "s3"
         },
         credentials: {
-          accessKeyId: "AKIAZTKMYTMECYQ2BWWX",
-          secretAccessKey: "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",
+          accessKeyId: process.env.AWS_ACCESS_KEY,
+          secretAccessKey: process.env.AWS_PRIVATE_ACCESS_KEY,
         },
     });
     axios.interceptors.request.use(interceptor);
@@ -71,7 +74,7 @@ uploadFileToS3 = async function(aFile) {
     }
     // URL cant have spaces in it
     const fileName = aFile.name.replaceAll(' ', '_');
-    const url = `https://s3.us-east-2.amazonaws.com/hoorah/${fileName}`
+    const url = `${process.env.AWS_S3_BUCKET_URL}/${fileName}`
     await axios.put(url, aFile.data, options).then((res) => {
         returnUrl = res.config.url;
     });
