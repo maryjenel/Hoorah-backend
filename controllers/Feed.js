@@ -9,7 +9,7 @@ exports.postFeedItem = async (req, res, next) => {
   // get the file that was uploaded
   const file = req.files.media
 
-  const description = req.files.description
+  const { description } = req.body
   const split = file.name.split('.')
   split.pop()
   const fileName = split.join('.')
@@ -61,7 +61,7 @@ const uploadFileToS3 = async function (aFile) {
       service: 's3'
     },
     credentials: {
-      accessKeyId: process.env.AWS_ACCES_KEY,
+      accessKeyId: process.env.AWS_ACCESS_KEY,
       secretAccessKey: process.env.AWS_PRIVATE_ACCESS_KEY
     }
   })
