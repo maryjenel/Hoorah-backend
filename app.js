@@ -12,7 +12,7 @@ const isSecure = process.env.NODE_ENV === 'production' ? true : false;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(fileupload());
+app.use(fileupload({ useTempFiles: true, limits: { fileSize: '1000MB' } }))
 app.use(express.urlencoded({ extended: true }));
 
 const ffmpeg = require('fluent-ffmpeg')
@@ -36,7 +36,6 @@ app.all('*', (req, res, next) => {
   next()
 });
 
-app.use(fileupload({ useTempFiles: true, limits: { fileSize: '1000MB' } }))
 app.use((err, req, res, next) => {
     if(err.statusCode) {
         res.status(err.statusCode).send(err.message);
