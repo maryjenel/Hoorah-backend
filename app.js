@@ -27,6 +27,11 @@ app.use(session({
     }
 }));
 
+app.all('*', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  next()
+});
+
 app.use((err, req, res, next) => {
     if(err.statusCode) {
         res.status(err.statusCode).send(err.message);
