@@ -15,6 +15,10 @@ app.use(cookieParser());
 app.use(fileupload());
 app.use(express.urlencoded({ extended: true }));
 
+const ffmpeg = require('fluent-ffmpeg')
+const pathToFfmpeg = require('ffmpeg-static')
+ffmpeg.setFfmpegPath(pathToFfmpeg)
+
 app.set('trust proxy', 1);
 app.use(session({
     secret: process.env.COOKIE_KEY,
@@ -32,6 +36,7 @@ app.all('*', (req, res, next) => {
   next()
 });
 
+app.use(fileupload({ useTempFiles: true, limits: { fileSize: '1000MB' } }))
 app.use((err, req, res, next) => {
     if(err.statusCode) {
         res.status(err.statusCode).send(err.message);

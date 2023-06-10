@@ -4,6 +4,8 @@ const fs = require('fs/promises')
 
 const FeedItem = require('../models/FeedItem')
 const db = require('../db')
+const { compressVideo } = require('./Video')
+const { isImage } = require('../utils/isImage')
 
 exports.postFeedItem = async (req, res, next) => {
   // get the file that was uploaded
@@ -14,6 +16,10 @@ exports.postFeedItem = async (req, res, next) => {
   split.pop()
   const fileName = split.join('.')
   // upload to s3 bucket
+
+  if (!isImage(file)) {
+    compressVideo(file, req.files.media.name)
+  }
   const url = await uploadFileToS3(file)
   try {
     // create new feed item with filename and URL
