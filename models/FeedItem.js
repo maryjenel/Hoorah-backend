@@ -9,7 +9,7 @@ function FeedItem ({
 }) {
     this.fileName = fileName;
     this.url = url;
-    this.description;
+    this.description = description;
 };
 // add a createFeed method to the prototype
 FeedItem.prototype.createFeedItem = async function(feedItem) {
