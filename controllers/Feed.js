@@ -47,6 +47,27 @@ exports.postFeedItem = async (req, res, next) => {
         }
       })
     })
+  } else {
+    const url = await uploadFileToS3(file.data, file)
+    try {
+      // create new feed item with filename and URL
+      const feedItem = new FeedItem({ fileName, url, description })
+      // insert into postgres DB
+      await feedItem.createFeedItem(feedItem)
+      res.send(feedItem)
+    } catch (error) {
+      const errorToThrow = new Error()
+      switch (error?.code) {
+        case '23505':
+          errorToThrow.message = 'FeedItem already exists'
+          errorToThrow.statusCode = 403
+          break
+        default:
+          errorToThrow.message = error.message
+          errorToThrow.statusCode = 500
+      }
+      next(errorToThrow)
+    }
   }
 }
 
