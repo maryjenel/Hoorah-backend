@@ -1,6 +1,6 @@
 const { aws4Interceptor } = require('aws4-axios')
 const axios = require('axios')
-const fs = require('fs/promises')
+const fs = require('fs')
 
 const FeedItem = require('../models/FeedItem')
 const db = require('../db')
@@ -18,27 +18,35 @@ exports.postFeedItem = async (req, res, next) => {
   // upload to s3 bucket
 
   if (!isImage(file)) {
-    compressVideo(file, req.files.media.name)
-  }
-  const url = await uploadFileToS3(file)
-  try {
-    // create new feed item with filename and URL
-    const feedItem = new FeedItem({ fileName, url, description })
-    // insert into postgres DB
-    await feedItem.createFeedItem(feedItem)
-    res.send(feedItem)
-  } catch (error) {
-    const errorToThrow = new Error()
-    switch (error?.code) {
-      case '23505':
-        errorToThrow.message = 'FeedItem already exists'
-        errorToThrow.statusCode = 403
-        break
-      default:
-        errorToThrow.message = error.message
-        errorToThrow.statusCode = 500
-    }
-    next(errorToThrow)
+    compressVideo(file, req.files.media.name, async function (outputPath) {
+      console.log({ outputPath, file })
+      fs.readFile(outputPath, async (err, data) => {
+        if (err) {
+          console.error('Error reading the MP4 file:', err)
+        } else {
+          const url = await uploadFileToS3(data, file)
+          try {
+            // create new feed item with filename and URL
+            const feedItem = new FeedItem({ fileName, url, description })
+            // insert into postgres DB
+            await feedItem.createFeedItem(feedItem)
+            res.send(feedItem)
+          } catch (error) {
+            const errorToThrow = new Error()
+            switch (error?.code) {
+              case '23505':
+                errorToThrow.message = "FeedItem already exists"
+                errorToThrow.statusCode = 403
+                break
+              default:
+                errorToThrow.message = error.message
+                errorToThrow.statusCode = 500
+            }
+            next(errorToThrow)
+          }
+        }
+      })
+    })
   }
 }
 
@@ -59,7 +67,7 @@ exports.getFeed = async (request, response, next) => {
   }
 }
 
-const uploadFileToS3 = async function (aFile) {
+const uploadFileToS3 = async function (aFile, orgFile) {
   let returnUrl = ''
   const interceptor = aws4Interceptor({
     options: {
@@ -80,9 +88,9 @@ const uploadFileToS3 = async function (aFile) {
     }
   }
   // URL cant have spaces in it
-  const fileName = aFile.name.replaceAll(' ', '_')
+  const fileName = orgFile.name.replaceAll(' ', '_')
   const url = `https://s3.us-east-2.amazonaws.com/hoorah/${fileName}`
-  await axios.put(url, aFile.data, options).then(res => {
+  await axios.put(url, aFile, options).then(res => {
     returnUrl = res.config.url
   })
   return returnUrl

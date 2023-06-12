@@ -4,6 +4,7 @@ node_modules\.bin
 # testing
 /coverage
 # production
+/tmp
 /build
 # misc
 .DS_Store
