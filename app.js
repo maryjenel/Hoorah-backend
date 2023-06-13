@@ -12,7 +12,7 @@ const isSecure = process.env.NODE_ENV === 'production' ? true : false;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(fileupload({ useTempFiles: true, limits: { fileSize: '1000MB' } }))
+app.use(fileupload({ useTempFiles: true, tempFileDir: '/tmp/' }))
 app.use(express.urlencoded({ extended: true }));
 
 const ffmpeg = require('fluent-ffmpeg')

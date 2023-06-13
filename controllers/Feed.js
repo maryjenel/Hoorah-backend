@@ -16,7 +16,7 @@ exports.postFeedItem = async (req, res, next) => {
   split.pop()
   const fileName = split.join('.')
   // upload to s3 bucket
-  console.log(isImage(file.mimetype))
+  console.log(isImage(file.mimetype), {file})
 
   if (!isImage(file.mimetype)) {
     compressVideo(file, req.files.media.name, async function (outputPath) {
@@ -48,26 +48,34 @@ exports.postFeedItem = async (req, res, next) => {
       })
     })
   } else {
-    const url = await uploadFileToS3(file.data, file)
-    try {
-      // create new feed item with filename and URL
-      const feedItem = new FeedItem({ fileName, url, description })
-      // insert into postgres DB
-      await feedItem.createFeedItem(feedItem)
-      res.send(feedItem)
-    } catch (error) {
-      const errorToThrow = new Error()
-      switch (error?.code) {
-        case '23505':
-          errorToThrow.message = 'FeedItem already exists'
-          errorToThrow.statusCode = 403
-          break
-        default:
-          errorToThrow.message = error.message
-          errorToThrow.statusCode = 500
+    // we have to readfile to process correct image
+    // https://github.com/richardgirges/express-fileupload/issues/139
+    fs.readFile(file.tempFilePath, async (err, data) => {
+      if (err) {
+        console.error('Error reading the MP4 file:', err)
+      } else {
+        const url = await uploadFileToS3(data, file)
+        try {
+          // create new feed item with filename and URL
+          const feedItem = new FeedItem({ fileName, url, description })
+          // insert into postgres DB
+          await feedItem.createFeedItem(feedItem)
+          res.send(feedItem)
+        } catch (error) {
+          const errorToThrow = new Error()
+          switch (error?.code) {
+            case '23505':
+              errorToThrow.message = "FeedItem already exists"
+              errorToThrow.statusCode = 403
+              break
+            default:
+              errorToThrow.message = error.message
+              errorToThrow.statusCode = 500
+          }
+          next(errorToThrow)
+        }
       }
-      next(errorToThrow)
-    }
+    })
   }
 }
 
