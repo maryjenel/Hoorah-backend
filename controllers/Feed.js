@@ -16,10 +16,10 @@ exports.postFeedItem = async (req, res, next) => {
   split.pop()
   const fileName = split.join('.')
   // upload to s3 bucket
+  console.log(isImage(file.mimetype))
 
-  if (!isImage(file)) {
+  if (!isImage(file.mimetype)) {
     compressVideo(file, req.files.media.name, async function (outputPath) {
-      console.log({ outputPath, file })
       fs.readFile(outputPath, async (err, data) => {
         if (err) {
           console.error('Error reading the MP4 file:', err)

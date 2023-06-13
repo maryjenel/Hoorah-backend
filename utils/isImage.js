@@ -1,3 +1,5 @@
-exports.isImage = (url) => {
-  return /\.(jpg|jpeg|png|webp|avif|gif|JPG|svg)$/.test(url)
+exports.isImage = (mimetype) => {
+  const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png']
+
+  return acceptedImageTypes.includes(mimetype)
 }
