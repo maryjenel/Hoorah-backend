@@ -5,7 +5,7 @@ const fs = require('fs')
 const FeedItem = require('../models/FeedItem')
 const db = require('../db')
 const { compressVideo } = require('./Video')
-const { isImage } = require('../utils/isImage')
+const { isVideo } = require('../utils/isImage')
 
 exports.postFeedItem = async (req, res, next) => {
   // get the file that was uploaded
@@ -16,10 +16,8 @@ exports.postFeedItem = async (req, res, next) => {
   split.pop()
   const fileName = split.join('.')
   // upload to s3 bucket
-  console.log(isImage(file.mimetype), {file})
-
-  if (!isImage(file.mimetype)) {
-    compressVideo(file, req.files.media.name, async function (outputPath) {
+  if (isVideo(file.name)) {
+    compressVideo({videoPath: file, outputPathh: req.files.media.name, callback: async function (outputPath) {
       fs.readFile(outputPath, async (err, data) => {
         if (err) {
           console.error('Error reading the MP4 file:', err)
@@ -46,7 +44,7 @@ exports.postFeedItem = async (req, res, next) => {
           }
         }
       })
-    })
+    }})
   } else {
     // we have to readfile to process correct image
     // https://github.com/richardgirges/express-fileupload/issues/139

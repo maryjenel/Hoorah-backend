@@ -1,11 +1,10 @@
 const ffmpeg = require('fluent-ffmpeg')
 
-exports.compressVideo = (videoPath, outputPathh, callback) => {
+exports.compressVideo = ({videoPath, outputPathh, originalBitrate = 1000, callback}) => {
   // Input video file path
   // Output video file path
   const outputPath = `tmp/compressed_${outputPathh}.mp4`
-  const originalBitrate = 1000 // Original bitrate in Kbps
-  const desiredBitrate = originalBitrate / 4 // Desired bitrate in Kbps
+  const desiredBitrate = originalBitrate / 3 // Desired bitrate in Kbps
   // Compress the video
   console.log(videoPath.tempFilePath)
   ffmpeg(videoPath.tempFilePath)

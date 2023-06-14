@@ -3,3 +3,8 @@ exports.isImage = (mimetype) => {
 
   return acceptedImageTypes.includes(mimetype)
 }
+
+
+exports.isVideo = (url) => {
+  return /\.(MP4|mp4|MOV|mov)$/.test(url)
+  }
